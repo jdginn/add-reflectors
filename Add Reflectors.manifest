@@ -1,0 +1,12 @@
+{
+	"autodeskProduct":	"Fusion",
+	"type":	"script",
+	"author":	"Justin Ginn",
+	"description":	{
+		"":	"Adds reflector-absorber structures to acoustically improve a recording studio live room"
+	},
+	"version":	"",
+	"supportedOS":	"mac",
+	"editEnabled":	true,
+	"iconFilename":	"ScriptIcon.svg"
+}
