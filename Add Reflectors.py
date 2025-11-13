@@ -6,7 +6,7 @@ import adsk.fusion
 from adsk.fusion import FeatureOperations, ExtentDirections, DistanceExtentDefinition, ToEntityExtentDefinition
 from adsk.core import ValueInput, Point3D
 import math
-# import adsk.cam
+import os
 
 # Initialize the global variables for the Application and UserInterface objects.
 app = adsk.core.Application.get()
@@ -66,6 +66,8 @@ def add_left_absorbers(sketch: adsk.fusion.Sketch, ceiling_body: adsk.fusion.BRe
         absorber_extrude_input.setOneSideExtent(ToEntityExtentDefinition.create(ceiling_body, False), ExtentDirections.NegativeExtentDirection)
         absorber_extrusion = root.features.extrudeFeatures.add(absorber_extrude_input)
         absorber_extrusion.bodies.item(0).name = f'l_absorber_{i}'
+    
+    
 
 
 def add_right_absorbers(sketch: adsk.fusion.Sketch, ceiling_body: adsk.fusion.BRepBody):
@@ -123,6 +125,9 @@ def run(_context: str):
         r_ceiling = root.bRepBodies.itemByName('Hall Arch 1')
         add_right_absorbers(floor_sketch, r_ceiling)
 
+        file_path = os.path.expanduser('~/repos/live_room_models/with_reflectors.3mf')
+        opt = design.exportManager.createC3MFExportOptions(root, file_path)
+        design.exportManager.execute(opt)
 
     except:  #pylint:disable=bare-except
         # Write the error message to the TEXT COMMANDS window.
