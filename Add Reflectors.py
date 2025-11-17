@@ -17,14 +17,14 @@ ui  = app.userInterface
 # All angles in degrees
 # All distances in mm
 l_num_reflectors = 5
-l_reflector_angle = 17
-l_reflector_depth = 20
+l_reflector_angle = 50
+l_reflector_depth = 40
 l_start_offset = 30
 l_finish_offset = 30
 
 r_num_reflectors = 7
-r_reflector_angle = 19
-r_reflector_depth = 20
+r_reflector_angle = 40
+r_reflector_depth = 40
 r_start_offset = 30
 r_finish_offset = 30
 
@@ -56,12 +56,12 @@ def add_left_absorbers(sketch: adsk.fusion.Sketch, ceiling_body: adsk.fusion.BRe
         reflector_line = sketch.sketchCurves.sketchLines.addByTwoPoints(p1, p2)
         absorber_line = sketch.sketchCurves.sketchLines.addByTwoPoints(p2, p3)
         # design.computeAll()
-        reflector_extrude_input = extrudes.createInput(root.createOpenProfile(reflector_line), FeatureOperations.NewBodyFeatureOperation)
+        reflector_extrude_input = extrudes.createInput(root.createOpenProfile(reflector_line, False), FeatureOperations.NewBodyFeatureOperation)
         reflector_extrude_input.isSolid = False
         reflector_extrude_input.setOneSideExtent(ToEntityExtentDefinition.create(ceiling_body, False), ExtentDirections.NegativeExtentDirection)
         reflector_extrusion = root.features.extrudeFeatures.add(reflector_extrude_input)
         reflector_extrusion.bodies.item(0).name= f'l_reflector_{i}'
-        absorber_extrude_input = extrudes.createInput(root.createOpenProfile(absorber_line), FeatureOperations.NewBodyFeatureOperation)
+        absorber_extrude_input = extrudes.createInput(root.createOpenProfile(absorber_line, False), FeatureOperations.NewBodyFeatureOperation)
         absorber_extrude_input.isSolid = False
         absorber_extrude_input.setOneSideExtent(ToEntityExtentDefinition.create(ceiling_body, False), ExtentDirections.NegativeExtentDirection)
         absorber_extrusion = root.features.extrudeFeatures.add(absorber_extrude_input)
@@ -95,14 +95,15 @@ def add_right_absorbers(sketch: adsk.fusion.Sketch, ceiling_body: adsk.fusion.BR
         p2 = sketch.sketchPoints.add(Point3D.create(room_width - r_reflector_depth, r_start_offset + i * reflector_spacing + reflector_length, 0))
         p3 = sketch.sketchPoints.add(Point3D.create(room_width, r_start_offset + (i + 1) * reflector_spacing, 0))
         reflector_line = sketch.sketchCurves.sketchLines.addByTwoPoints(p1, p2)
-        absorber_line = sketch.sketchCurves.sketchLines.addByTwoPoints(p2, p3)
+        
         # design.computeAll()
-        reflector_extrude_input = extrudes.createInput(root.createOpenProfile(reflector_line), FeatureOperations.NewBodyFeatureOperation)
+        reflector_extrude_input = extrudes.createInput(root.createOpenProfile(reflector_line, False), FeatureOperations.NewBodyFeatureOperation)
         reflector_extrude_input.isSolid = False
         reflector_extrude_input.setOneSideExtent(ToEntityExtentDefinition.create(ceiling_body, False), ExtentDirections.PositiveExtentDirection)
         reflector_extrusion = root.features.extrudeFeatures.add(reflector_extrude_input)
         reflector_extrusion.bodies.item(0).name= f'r_reflector_{i}'
-        absorber_extrude_input = extrudes.createInput(root.createOpenProfile(absorber_line), FeatureOperations.NewBodyFeatureOperation)
+        absorber_line = sketch.sketchCurves.sketchLines.addByTwoPoints(p2, p3)
+        absorber_extrude_input = extrudes.createInput(root.createOpenProfile(absorber_line, False), FeatureOperations.NewBodyFeatureOperation)
         absorber_extrude_input.isSolid = False
         absorber_extrude_input.setOneSideExtent(ToEntityExtentDefinition.create(ceiling_body, False), ExtentDirections.PositiveExtentDirection)
         absorber_extrusion = root.features.extrudeFeatures.add(absorber_extrude_input)
@@ -121,7 +122,7 @@ def run(_context: str):
         root = design.rootComponent
         floor_sketch = root.sketches.itemByName('Floor')
         l_ceiling = root.bRepBodies.itemByName('Street Arch 1')
-        add_left_absorbers(floor_sketch, l_ceiling)
+        add_left_absorbers(floor_sketch, l_ceiling)       
         r_ceiling = root.bRepBodies.itemByName('Hall Arch 1')
         add_right_absorbers(floor_sketch, r_ceiling)
 
